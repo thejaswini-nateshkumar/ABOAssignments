@@ -1,2 +1,38 @@
 Q1 : Retrieve the first 5 employees by highest salary.
   select * from employees order by salary desc limit 5;
+
+Q2 : Retrieve the 5 employees with the lowest salary, skipping the first 10 records.
+    select * from employees order by salary asc limit 5 offset 10;
+
+Q3 : Display each department's total salary, but only show departments where the total salary exceeds $30,000.
+      select department_name,sum(salary) as tot_salary 
+      from employees e inner join departments d
+      on e.department_id=d.department_id
+      group by department_name 
+      having sum(salary) >15000;
+
+Q4 : For each employee, display their salary and a note if it is above or below $7000.
+      select employee_id,first_name,salary
+      case when salary>7000 then 'Above $7000'
+      else 'Below $7000' end as salary_note
+      from employees;
+
+Q5 : List the projects that started in the last 6 months.
+      select project_id,project_name,start_date
+      from projects where start_date>=date_sub(curdate(), interval 6 month);
+
+Q6 : Display all projects, including those with no employees assigned.
+      SELECT p.project_id, p.project_name, e.employee_id
+      FROM projects p
+      LEFT JOIN employeeprojects ep ON p.project_id = ep.project_id
+      LEFT JOIN employees e ON ep.employee_id = e.employee_id;
+
+Q7 : Increase the salary of all employees in the 'Finance' department by 12%.
+      UPDATE employees
+      SET salary = salary * 1.12
+      WHERE department_id = (SELECT department_id FROM departments WHERE department_name = 'Finance');
+
+Q8 : Retrieve the first and last names of employees whose last names start with 'S'.
+      select first_name,last_name
+      from employees
+      where last_name like 'S%';
