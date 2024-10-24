@@ -1,0 +1,2 @@
+Q1 : Retrieve the first 5 employees by highest salary.
+  select * from employees order by salary desc limit 5;
