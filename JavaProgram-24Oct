@@ -1,0 +1,24 @@
+Q : Median of Two Array
+
+public medainOfTwoArray{
+    public static double medianOf2(int[] a1, int[] a2) {
+        int[] a3 = new int[a1.length + a2.length];
+        System.arraycopy(a1, 0, a3, 0, a1.length);
+        System.arraycopy(a2, 0, a3, a1.length, a2.length);
+        Arrays.sort(a3);
+        int n = a3.length;
+        if (n % 2 == 0) { 
+            int mid1 = n / 2;
+            int mid2 = mid1 - 1;
+            return (a3[mid1] + a3[mid2]) / 2.0;
+        } 
+        else {
+            return a3[n / 2];
+        }
+    }
+    public static void main(String[] args) {
+        int[] a1 = { -5, 3, 6, 12, 15 };
+        int[] a2 = { -12, -10, -6, -3, 4, 10 };
+        System.out.println(medianOf2(a1, a2));
+    }
+}
