@@ -38,3 +38,34 @@ class Solution {
   }
 }
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q : Given a dictionary (list of words) and a substring, you have to return the length of the longest word in the dictinary containing the substring.
+Example:
+String[] dict = {"CODGE", "ODG", "LODGES", "SODG", "dodge", "mODJ", "LODGESSSS"}
+String toSearch = "ODG";
+//Returns 9 (LODGESSSS)
+
+----->
+class Solution {
+  public static void main(String[] args) {
+    String[] dict = {"CODGE", "ODG", "LODGES", "SODG", "dodge", "mODJ", "LODGE"};
+    String toSearch = "ODG";
+    System.out.println(stringOperations(dict,toSearch));
+  }
+  public static String stringOperations(String[] dict,String toSearch){
+    String longest="";
+    for(String s:dict){
+      if(s.contains(toSearch)){
+        if(longest.length()<s.length()){
+          longest=s;
+        }
+      }
+    }
+    return longest;
+  }
+}
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q : Write a program to print the inorder traversal of a binary tree.
+------->
+
