@@ -1,0 +1,40 @@
+Q1 : Convert a string as given in the format below:
+Example:
+aabbb into a2b3, aaaa into a4, a into a1
+
+------>
+class Solution {
+  public static void main(String[] args) {
+    String s1="aabbb";
+    System.out.println(stringOperations(s1));
+    System.out.println(stringOperationsUsingMap(s1));
+    String s2="ccffaa";
+    System.out.println(stringOperations(s2));
+    System.out.println(stringOperationsUsingMap(s2));
+  }
+  public static String stringOperationsUsingMap(String s){
+    StringBuilder res=new StringBuilder();
+    HashMap<Character,Integer> hs=new HashMap<>();
+    for(char ch:s.toCharArray()){
+      hs.put(ch, hs.getOrDefault(ch, 0)+1);
+    }
+    for(Map.Entry<Character, Integer> map:hs.entrySet()){
+      res.append(map.getKey()).append(map.getValue());
+    }
+    return res.toString();
+  }
+  public static String stringOperations(String s){
+    StringBuilder result=new StringBuilder();
+    int c=1;
+    for(int i=0;i<s.length();i++){
+      if(i<s.length()-1 && s.charAt(i)==s.charAt(i+1)){
+        c++;
+      }else{
+        result.append(s.charAt(i)).append(c);
+        c=1;
+      }
+    }
+    return result.toString();
+  }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
