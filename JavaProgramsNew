@@ -66,6 +66,59 @@ class Solution {
 }
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Q : Write a program to print the inorder traversal of a binary tree.
-------->
+Q : Given the string (containing directions e.g., U, R, D, L) and initial coordinates (0,0),
+return the final coordinates after traversing the string.
+Examples: Given (0,0) and String - "UUU"
+  Answer : (0,3)
 
+------->
+class Solution {
+  public static void main(String[] args) {
+    String s1 = "UUU";
+    System.out.println(Arrays.toString(strngCordinates(s1)));
+    String s2 = "URRDDL";
+    System.out.println(Arrays.toString(strngCordinates(s2)));
+  }
+  public static int[] strngCordinates(String s){
+    int x=0,y=0;
+    for(char ch:s.toCharArray()){
+      switch(ch){
+        case 'U': y++;
+        break;
+        case 'R': x++;
+        break;
+        case 'D': y--;
+        break;
+        case 'L': x--;
+        break;
+        default: System.out.println("Invalid direction: " + ch);
+        break;
+      }
+    }
+    return new int[]{x, y};
+  }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q : Prefix Search
+    Given a document and a prefix, return all the words starting with the prefix.
+
+-------->
+class Solution {
+  public static void main(String[] args) {
+    String[] dict = {"ODGE", "ODG", "LODGES", "SODG", "dodge", "mODJ", "LODGE"};
+    String toSearch = "ODG";
+    System.out.println(stringOperations(dict,toSearch));
+  }
+  public static List<String> stringOperations(String[] dict,String toSearch){
+    List<String> result=new LinkedList<>();
+    for(String s:dict){
+      if(s.startsWith(toSearch)){
+        result.add(s);
+      }
+    }
+    return result;
+  }
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
