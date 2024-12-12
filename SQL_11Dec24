@@ -1,0 +1,27 @@
+Q1 : Delete duplicates from table with primary key
+
+delete from orders
+where order_id not in (
+    select min(order_id)
+    from orders
+    group by cust_id, order_date
+);
+
+----------------------------------------------------------------------------------------------
+
+Q2 : Delete_Duplicates.txt
+
+create table temp_ep as select * from employees_projects where project_id='null';
+
+insert into temp_ep(project_id, employee_id)
+select project_id, employee_id from (
+select *, row_number() over(partition by project_id, employee_id) as row_num
+from employees_projects ) as subquery
+where row_num = 1;
+
+delete from employees_projects;
+
+insert into employees_projects (project_id, employee_id)
+select project_id, employee_id from temp_ep;
+
+------------------------------------------------------------------------------------------------
