@@ -1,0 +1,147 @@
+--1.Write a query to fetch the names of employees and their department name.
+
+select employee_id,department_name,first_name,last_name from 
+employees e join departments d
+on e.department_id=d.department_id
+order by employee_id asc;
+
+-------------------------------------------------------------------------------------------------
+--2.Find the total hours logged by each employee across all projects.
+
+select  ep.employee_id,concat(first_name, ' ', last_name) as Employee_name, project_name, sum(hours_logged)
+from employees e inner join projects p inner join employees_projects ep
+where e.employee_id=ep.employee_id
+and p.project_id=ep.project_id
+group by ep.employee_id,concat(first_name, ' ', last_name), project_name
+order by employee_id asc;
+
+----------------------------------------------------------------------------------------------------------
+--3. Retrieve the department name and count of employees in each department.
+
+select d.department_id,d.department_name,count(1)
+from departments d inner join  employees e
+on d.department_id=e.department_id
+group by d.department_id,d.department_name;
+
+--------------------------------------------------------------------------------------------------------------
+--4. Identify employees who work on more than 2 projects.
+
+select e.employee_id,concat(first_name, ' ', last_name) as Employee_name, count(1) as project_count
+from employees e inner join employees_projects ep on e.employee_id=ep.employee_id
+group by e.employee_id,Employee_name 
+having count(1)>1;
+
+-------------------------------------------------------------------------------------------------------------
+--5. Write a query to find employees who do not work on any project.
+
+select e.employee_id,concat(first_name, ' ', last_name) as Employee_name
+from employees e left join employees_projects ep on e.employee_id=ep.employee_id
+where ep.employee_id is null;
+
+------------------------------------------------------------------------------------------------------------------
+--6. Find employees earning a salary greater than the average salary of their department.
+
+select e.employee_id, CONCAT(e.first_name, ' ', e.last_name) AS Employee_name, e.salary, d.department_name
+from employees e inner join departments d on e.department_id=d.department_id 
+where e.salary>(select avg(salary) from employees e2 where e2.department_id=e.department_id)
+order by e.employee_id asc;
+
+------------------------------------------------------------------------------------------------------------------------
+--7.Write a query using a self jointo display employee names along with their manager's name.
+
+select concat(e.first_name, ' ', e.last_name) as name, concat(m.first_name, ' ', m.last_name) as manager_name
+from employees e
+left join departments d on e.department_id = d.department_id
+left join employees m on d.manager_id = m.employee_id;
+
+-----------------------------------------------------------------------------------------------------------------------------------
+--8. Identify projects where the total hours logged by all employees exceed 500.
+
+SELECT p.project_id, p.project_name, SUM(ep.hours_logged) AS total_hours_logged
+FROM projects p
+INNER JOIN employees_projects ep ON p.project_id = ep.project_id
+GROUP BY p.project_id, p.project_name
+HAVING SUM(ep.hours_logged) > 500;
+
+------------------------------------------------------------------------------------------------------------------
+--9.Retrieve the name of the department where the manager has the highest salary
+
+SELECT d.department_name
+FROM departments d INNER JOIN employees e ON d.manager_id = e.employee_id
+WHERE e.salary = (SELECT MAX(salary) FROM employees WHERE employee_id IN (SELECT manager_id FROM departments));
+
+------------------------------------------------------------------------------------------------------------------------------------
+--10.Display employees who have logged more than 40 hours on any project using a CASE statement to classify them as 'Overtime' or 'Normal.'
+
+SELECT e.employee_id,CONCAT(e.first_name, ' ', e.last_name) AS Employee_name, p.project_name,ep.hours_logged,
+CASE WHEN ep.hours_logged > 200 THEN 'Overtime'
+ELSE 'Normal' END AS Work_Status
+FROM employees e INNER JOIN employees_projects ep ON e.employee_id = ep.employee_id
+INNER JOIN projects p ON p.project_id = ep.project_id;
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+--11.Find employees who were hired after January 1, 2020, and have not been allocated to any projects.
+
+select e.employee_id,concat(first_name, ' ', last_name) as Employee_name, hire_date
+from employees e left join employees_projects ep on e.employee_id=ep.employee_id
+where ep.employee_id is null and hire_date<'2010-01-01';
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+--12. Write a query to display employees whose total salary transactions (including bonuses/deductions) exceed 10,000.
+
+select t.employee_id,CONCAT(e.first_name, ' ', e.last_name) AS Employee_name,sum(amount)
+from transaction t inner join  employees e on e.employee_id=t.employee_id
+group by t.employee_id,Employee_name having sum(amount)>10000;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+--13.Retrieve the transaction details of employees where the transaction type is "Bonus" and the amount is in the top 5% of all bonuses.
+
+SELECT e.employee_id, CONCAT(e.first_name, ' ', e.last_name) AS Employee_name, e.department_id, e.salary 
+FROM employees e INNER JOIN (SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id) dept_max ON e.department_id = dept_max.department_id
+AND e.salary = dept_max.max_salary;
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--15. Display the average hours logged by employees for each project.
+
+SELECT p.project_id, p.project_name, AVG(ep.hours_logged) AS average_hours_logged 
+FROM projects p INNER JOIN employees_projects ep ON p.project_id = ep.project_id 
+GROUP BY p.project_id, p.project_name;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--16. Write a query to fetch all employees who belong to the same department as "John Doe" using self joins.
+
+SELECT e2.employee_id, CONCAT(e2.first_name, ' ', e2.last_name) AS Employee_name, e2.department_id 
+FROM employees e1 JOIN employees e2 ON e1.department_id = e2.department_id 
+WHERE e1.first_name = 'John' AND e1.last_name = 'Doe' AND e2.employee_id != e1.employee_id;
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+--17. Find the departments where no projects have started.
+
+SELECT d.department_id, d.department_name 
+FROM departments d LEFT JOIN employees e ON d.department_id = e.department_id 
+LEFT JOIN employees_projects ep ON e.employee_id = ep.employee_id 
+LEFT JOIN projects p ON ep.project_id = p.project_id 
+WHERE p.project_id IS NULL;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+--18. Retrieve employee details for employees working on all projects.
+
+SELECT e.employee_id, CONCAT(e.first_name, ' ', e.last_name) AS Employee_name, e.department_id, e.salary
+FROM employees e JOIN employees_projects ep ON e.employee_id = ep.employee_id
+GROUP BY e.employee_id,Employee_name,e.department_id,e.salary
+HAVING COUNT(DISTINCT ep.project_id) = (SELECT COUNT(*) FROM projects);
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+--19. List employees whose names start with the letter 'A' and have logged more than 20 hours on any project.
+
+SELECT e.employee_id, CONCAT(e.first_name, ' ', e.last_name) AS Employee_name, p.project_name, ep.hours_logged 
+FROM employees e INNER JOIN employees_projects ep ON e.employee_id = ep.employee_id 
+INNER JOIN projects p ON p.project_id = ep.project_id
+WHERE e.first_name LIKE 'A%' AND ep.hours_logged > 20;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+--20. Identify the total transactions per employee along with their latest transaction date.
+
+SELECT e.employee_id, CONCAT(e.first_name, ' ', e.last_name) AS Employee_name, SUM(t.amount) AS total_transactions, MAX(t.transaction_date) AS latest_transaction_date 
+ FROM employees e INNER JOIN transaction t ON e.employee_id = t.employee_id 
+ GROUP BY e.employee_id, Employee_name;
