@@ -4,7 +4,6 @@ SELECT e.first_name, e.last_name, p.project_name, ep.hours_logged
 FROM Employees e JOIN employees_projects ep ON e.employee_id = ep.employee_id
 JOIN Projects p ON ep.project_id = p.project_id
 WHERE ep.project_id IN (SELECT project_id FROM employees_projects GROUP BY project_id HAVING SUM(hours_logged) > 100);
-
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 2.  Find employees with the most logged hours across all projects.
 
@@ -13,24 +12,50 @@ FROM Employees e JOIN employees_projects ep ON e.employee_id = ep.employee_id
 GROUP BY e.employee_id, e.first_name, e.last_name
 ORDER BY total_hours DESC
 LIMIT 1;
-
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 3. Display department names and the total salary paid to employees in each department.
 
 SELECT d.department_name, SUM(e.salary) AS total_salary 
 FROM Departments d JOIN Employees e ON d.department_id = e.department_id 
 GROUP BY d.department_name;
-
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 4. Retrieve employees whose salaries are above the average salary across the company.
 
 SELECT employee_id, first_name, last_name, salary FROM Employees WHERE salary > (SELECT AVG(salary) FROM Employees);
-
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 5. Write a query to display projects that started after 2023 and do not have any employees assigned yet.
 
 SELECT p.project_id, p.project_name, p.start_date
 FROM Projects p LEFT JOIN employees_projects ep ON p.project_id = ep.project_id
 WHERE p.start_date > '2023-01-01' AND ep.project_id IS NULL;
-
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+6. Using a CASE statement, classify transactions as "High Value" if the amount is greater than 5,000; otherwise, classify them as "Low Value."
+
+SELECT transaction_id, amount, CASE WHEN amount > 5000 THEN 'High Value' ELSE 'Low Value' END AS transaction_class FROM transaction;
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+7. Identify the project(s) with the most employees assigned.
+
+select project_name, count(employee_id) as employee_count
+from projects p left join employees_projects ep
+on p.project_id=ep.project_id
+group by project_name
+order by employee_count desc
+limit 1;
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8. Display departments and the count of employees earning below 50,000.
+
+SELECT d.department_name, COUNT(e.employee_id) AS employee_count 
+FROM Departments d LEFT JOIN Employees e 
+ON d.department_id = e.department_id 
+WHERE e.salary < 60000 
+GROUP BY d.department_name;
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+9. Write a query to find the 5 employees with the highest salaries who have worked on the most projects.
+
+SELECT e.employee_id,concat(e.first_name, ' ', e.last_name) as employee_name, e.salary, COUNT(ep.project_id) AS project_count 
+FROM Employees e JOIN employees_projects ep ON e.employee_id = ep.employee_id 
+GROUP BY e.employee_id, e.first_name, e.last_name, e.salary 
+ORDER BY e.salary DESC, project_count DESC 
+LIMIT 5;
+
+
