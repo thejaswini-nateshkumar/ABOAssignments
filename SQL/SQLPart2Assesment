@@ -1,0 +1,36 @@
+1. Write a query to list employees, their projects, and hours logged, with projects having more than 100 hours total.
+
+SELECT e.first_name, e.last_name, p.project_name, ep.hours_logged
+FROM Employees e JOIN employees_projects ep ON e.employee_id = ep.employee_id
+JOIN Projects p ON ep.project_id = p.project_id
+WHERE ep.project_id IN (SELECT project_id FROM employees_projects GROUP BY project_id HAVING SUM(hours_logged) > 100);
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2.  Find employees with the most logged hours across all projects.
+
+SELECT e.employee_id, e.first_name, e.last_name, SUM(ep.hours_logged) AS total_hours
+FROM Employees e JOIN employees_projects ep ON e.employee_id = ep.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+ORDER BY total_hours DESC
+LIMIT 1;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3. Display department names and the total salary paid to employees in each department.
+
+SELECT d.department_name, SUM(e.salary) AS total_salary 
+FROM Departments d JOIN Employees e ON d.department_id = e.department_id 
+GROUP BY d.department_name;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Retrieve employees whose salaries are above the average salary across the company.
+
+SELECT employee_id, first_name, last_name, salary FROM Employees WHERE salary > (SELECT AVG(salary) FROM Employees);
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+5. Write a query to display projects that started after 2023 and do not have any employees assigned yet.
+
+SELECT p.project_id, p.project_name, p.start_date
+FROM Projects p LEFT JOIN employees_projects ep ON p.project_id = ep.project_id
+WHERE p.start_date > '2023-01-01' AND ep.project_id IS NULL;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
